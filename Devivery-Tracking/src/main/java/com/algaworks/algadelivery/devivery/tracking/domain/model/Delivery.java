@@ -178,6 +178,7 @@ public class Delivery {
 					" to " + newStatus
 			);
 		}
+		this.setStatus(newStatus);
 	}
 	
 	@Getter
