@@ -1,6 +1,7 @@
 package com.algaworks.algadelivery.devivery.tracking.domain.service;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.Duration;
 import java.util.UUID;
 
@@ -22,6 +23,9 @@ import lombok.RequiredArgsConstructor;
 public class DeliveryPreparationService {
 
 	private final DeliveryRepository deliveryRepository;
+	
+	private final DeliveryTimeEstimationService deliveryTimeEstimationService;
+	private final CourierPayoutCalculationService courierPayoutCalculationService;
 
 	@Transactional
 	public Delivery draft(DeliveryInput input) {
@@ -66,16 +70,17 @@ public class DeliveryPreparationService {
 				.build();
 		
 		
-		Duration expectedDeliveryTime = Duration.ofHours(3);
-		BigDecimal payout = new BigDecimal(10);
-		BigDecimal distanceFee = new BigDecimal(10);
+		DeliveryEstimate estimate = deliveryTimeEstimationService.estimate(sender, recipient);
+		BigDecimal calculatePayout = courierPayoutCalculationService.calculate(estimate.getDistanceInKm());	
+		
+		BigDecimal distanceFee = calculateFee(estimate.getDistanceInKm());
 		
 		var preparationDetails = Delivery.PreparationDetails.builder()
 				.sender(sender)
 				.recipient(recipient)
-				.courierPayout(payout)
+				.courierPayout(calculatePayout)
 				.distanceFee(distanceFee)
-				.expectedDelieryTime(expectedDeliveryTime)
+				.expectedDelieryTime(estimate.getEstimatedTime())
 				.build();
 		
 		delivery.editPreparationDetails(preparationDetails);
@@ -83,5 +88,12 @@ public class DeliveryPreparationService {
 		for (ItemIput itemIput : input.getItems()) {
 			delivery.addItem(itemIput.getName(), itemIput.getQuantity());
 		}
+	}
+
+
+	private BigDecimal calculateFee(Double distanceInKm) {
+		return new BigDecimal(3)
+				.multiply(new BigDecimal(distanceInKm))
+				.setScale(2, RoundingMode.HALF_EVEN);
 	}
 }
