@@ -8,6 +8,11 @@ import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
+import org.springframework.data.domain.AbstractAggregateRoot;
+
+import com.algaworks.algadelivery.devivery.tracking.domain.event.DeliveryFulfilledEvent;
+import com.algaworks.algadelivery.devivery.tracking.domain.event.DeliveryPickUpEvent;
+import com.algaworks.algadelivery.devivery.tracking.domain.event.DeliveryPlacedEvent;
 import com.algaworks.algadelivery.devivery.tracking.domain.exception.DomainException;
 
 import jakarta.persistence.AttributeOverride;
@@ -29,10 +34,10 @@ import lombok.Setter;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PACKAGE)
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = false)
 @Setter(value = AccessLevel.PRIVATE)
 @Getter
-public class Delivery {
+public class Delivery extends AbstractAggregateRoot<Delivery> {
 
 	@Id
 	@EqualsAndHashCode.Include
@@ -44,7 +49,7 @@ public class Delivery {
 	private OffsetDateTime placeAt;
 	private OffsetDateTime assignedAt;
 	private OffsetDateTime expectedDeliveryAt;
-	private OffsetDateTime fulfilledAd;
+	private OffsetDateTime fulfilledAt;
 	
 	private BigDecimal distanceFee;
 	private BigDecimal courierPayout;
@@ -127,17 +132,22 @@ public class Delivery {
 		verifyIfCanBePlaced();
 		this.changeStatusTo(DeliveryStatus.WAITING_FOR_COURIER);
 		this.setPlaceAt(OffsetDateTime.now());
+		
+		super.registerEvent(new DeliveryPlacedEvent(this.getPlaceAt(), this.getId()));
+		
 	}
 	
 	public void pickUp(UUID courierId) {
 		this.setCourierID(courierId);
 		this.changeStatusTo(DeliveryStatus.IN_TRANSIT);
 		this.setAssignedAt(OffsetDateTime.now());
+		super.registerEvent(new DeliveryPickUpEvent(this.getAssignedAt(), this.getId()));
 	}
 	
 	public void markAsDelivery() {
 		this.changeStatusTo(DeliveryStatus.DELIVERED);
-		this.setFulfilledAd(OffsetDateTime.now());
+		this.setFulfilledAt(OffsetDateTime.now());
+		super.registerEvent(new DeliveryFulfilledEvent(this.getFulfilledAt(), this.getId()));
 	}
 
 	public List<Item> getItems() {
