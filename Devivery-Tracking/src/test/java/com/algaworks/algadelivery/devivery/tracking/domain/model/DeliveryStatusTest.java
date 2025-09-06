@@ -4,6 +4,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
 
+import com.algaworks.algadelivery.delivery.tracking.domain.model.DeliveryStatus;
+
 public class DeliveryStatusTest {
     @Test
     void draft_canChangeToWaitingForCourier() {

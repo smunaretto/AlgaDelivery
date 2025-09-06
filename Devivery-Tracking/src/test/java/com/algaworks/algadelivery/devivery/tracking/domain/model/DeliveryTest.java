@@ -10,8 +10,11 @@ import java.time.Duration;
 
 import org.junit.jupiter.api.Test;
 
-import com.algaworks.algadelivery.devivery.tracking.domain.exception.DomainException;
-import com.algaworks.algadelivery.devivery.tracking.domain.model.Delivery.PreparationDetails;
+import com.algaworks.algadelivery.delivery.tracking.domain.exception.DomainException;
+import com.algaworks.algadelivery.delivery.tracking.domain.model.ContactPoint;
+import com.algaworks.algadelivery.delivery.tracking.domain.model.Delivery;
+import com.algaworks.algadelivery.delivery.tracking.domain.model.Delivery.PreparationDetails;
+import com.algaworks.algadelivery.delivery.tracking.domain.model.DeliveryStatus;
 
 class DeliveryTest {
 

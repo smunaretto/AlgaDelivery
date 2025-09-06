@@ -1,6 +1,6 @@
 package com.algaworks.algadelivery.devivery.tracking.domain.repository;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.math.BigDecimal;
 import java.time.Duration;
@@ -11,9 +11,10 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
-import com.algaworks.algadelivery.devivery.tracking.domain.model.ContactPoint;
-import com.algaworks.algadelivery.devivery.tracking.domain.model.Delivery;
-import com.algaworks.algadelivery.devivery.tracking.domain.model.Delivery.PreparationDetails;
+import com.algaworks.algadelivery.delivery.tracking.domain.model.ContactPoint;
+import com.algaworks.algadelivery.delivery.tracking.domain.model.Delivery;
+import com.algaworks.algadelivery.delivery.tracking.domain.model.Delivery.PreparationDetails;
+import com.algaworks.algadelivery.delivery.tracking.domain.repository.DeliveryRepository;
 
 
 @DataJpaTest
